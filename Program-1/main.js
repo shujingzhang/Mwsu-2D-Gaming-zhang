@@ -13,7 +13,7 @@ var mainState = {
         game.physics.startSystem(Phaser.Physics.ARCADE);
         game.renderer.renderSession.roundPixels = true;
 
-		game.time.events.add(Phaser.Timer.SECOND * 120, timeisout, this);
+	game.time.events.add(Phaser.Timer.SECOND * 120, timeisout, this);
 		
         this.cursor = game.input.keyboard.createCursorKeys();
         
@@ -31,8 +31,8 @@ var mainState = {
         this.scoreLabel = game.add.text(30, 30, 'score: 0', { font: '18px Arial', fill: '#ffffff' });
         this.score = 0;
 		
-		this.dieLabel = game.add.text(40, 40, 'Death: 0', { font: '18px Arial', fill: '#ffffff' });
-		this.death = 0;
+	this.dieLabel = game.add.text(40, 40, 'Death: 0', { font: '18px Arial', fill: '#ffffff' });
+	this.death = 0;
 		
         this.enemies = game.add.group();
         this.enemies.enableBody = true;
@@ -41,7 +41,7 @@ var mainState = {
     },
 	
 	timeisout: function(){
-		game.add.text(game.world.centerX,game.world.centerY, 'Game over', { font: '18px Arial', fill: '#ffffff' });
+	game.add.text(game.world.centerX,game.world.centerY, 'Game over', { font: '18px Arial', fill: '#ffffff' });
 	},
 
     update: function() {
@@ -53,7 +53,10 @@ var mainState = {
         this.movePlayer(); 
 
         if (!this.player.inWorld) {
-            this.playerDie();
+        this.player = game.add.sprite(game.width/game.rnd.integerInRange(1,10), game.height/game.width/game.rnd.integerInRange(1,10), 'player');
+        this.player.anchor.setTo(0.5, 0.5);
+        game.physics.arcade.enable(this.player);
+        this.player.body.gravity.y = 500;
         }
     },
 
@@ -134,13 +137,13 @@ var mainState = {
     },
 
     playerDie: function() {
-		  this.die += 1;
-		  this.scoreLabel.text = 'Death: ' + this.die;
+	this.die += 1;
+	this.scoreLabel.text = 'Death: ' + this.die;
 		  
-		  this.player = game.add.sprite(game.width/2, game.height/2, 'player');
-          this.player.anchor.setTo(0.5, 0.5);
-          game.physics.arcade.enable(this.player);
-          this.player.body.gravity.y = 500;
+	this.player = game.add.sprite(game.width/2, game.height/2, 'player');
+        this.player.anchor.setTo(0.5, 0.5);
+        game.physics.arcade.enable(this.player);
+        this.player.body.gravity.y = 500;
 		  
        // game.state.start('main');
     },
