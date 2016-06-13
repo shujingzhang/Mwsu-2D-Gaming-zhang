@@ -1,0 +1,10 @@
+
+Timer
+http://phaser.io/examples/v2/time/basic-timed-event
+
+game over
+http://phaser.io/examples/v2/games/invaders
+
+
+random
+http://phaser.io/examples/v2/misc/random-generators
