@@ -161,7 +161,17 @@ var playState = {
     },
 
     playerDie: function() {
-		this.emitter.x = this.player.x;
+	    // Kill the player to make it disappear from the screen
+	    this.player.kill();
+	    // Start the sound and the particles
+	    this.deadSound.play();
+	    this.emitter.x = this.player.x;
+	    this.emitter.y = this.player.y;
+	    this.emitter.start(true, 800, null, 15);
+
+    // Call the 'startMenu' function in 1000ms
+    game.time.events.add(1000, this.startMenu, this);
+	this.emitter.x = this.player.x;
 		this.emitter.y = this.player.y;
 		// Start the emitter by exploding 15 particles that will live 800ms
 		this.emitter.start(true, 800, null, 15);
