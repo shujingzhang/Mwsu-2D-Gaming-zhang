@@ -8,7 +8,5 @@ game.state.add('boot', bootState);
 game.state.add('load', loadState);
 game.state.add('menu', menuState);
 game.state.add('play', playState);
-game.camera.flash(0xffffff, 300);
 game.state.start('boot');
-game.camera.shake(0.02, 300);
 
