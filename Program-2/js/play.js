@@ -168,6 +168,8 @@ var playState = {
 	    this.emitter.x = this.player.x;
 	    this.emitter.y = this.player.y;
 	    this.emitter.start(true, 800, null, 15);
+	    game.camera.shake(0.02, 300);
+	game.camera.flash(0xffffff, 300);
 
     // Call the 'startMenu' function in 1000ms
     game.time.events.add(1000, this.startMenu, this);
