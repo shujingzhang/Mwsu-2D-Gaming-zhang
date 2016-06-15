@@ -8,6 +8,9 @@ var mainState = {
         game.load.image('enemy', 'assets/ghost.png');
     },
 
+	timeisout: function(){
+	game.add.text(game.world.centerX,game.world.centerY, 'Game over', { font: '18px Arial', fill: '#ffffff' });
+	},
     create: function() { 
         game.stage.backgroundColor = '#3498db';
         game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -40,9 +43,6 @@ var mainState = {
         game.time.events.loop(2200, this.addEnemy, this);
     },
 	
-	timeisout: function(){
-	game.add.text(game.world.centerX,game.world.centerY, 'Game over', { font: '18px Arial', fill: '#ffffff' });
-	},
 
     update: function() {
         game.physics.arcade.collide(this.player, this.walls);
