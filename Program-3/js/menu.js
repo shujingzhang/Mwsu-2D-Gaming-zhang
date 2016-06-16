@@ -47,6 +47,12 @@ var menuState = {
     },
 
     start: function() {
+    	if (!game.device.desktop && game.input.y < 50 && game.input.x < 60) {
+	// It means we want to mute the game, so we don't start the game
+	return;
+	}
+	else{
         game.state.start('play');   
+	}
     },
 };
