@@ -60,24 +60,21 @@ var playState = {
 		if (!game.device.desktop) {
 		this.addMobileInputs();
 	}
-	
-	orientationChange: function() {
-		// If the game is in portrait (wrong orientation)
-		if (game.scale.isPortrait) {
-			// Pause the game and add a text explanation
-			game.paused = true;
-			this.rotateLabel.text = 'rotate your device in landscape';
-		}
-		// If the game is in landscape (good orientation)
-		else {
-			// Resume the game and remove the text
-			game.paused = false;
-			this.rotateLabel.text = '';
-		}
-	},
-
     },
-	
+	orientationChange: function() {
+	// If the game is in portrait (wrong orientation)
+	if (game.scale.isPortrait) {
+		// Pause the game and add a text explanation
+		game.paused = true;
+		this.rotateLabel.text = 'rotate your device in landscape';
+	}
+	// If the game is in landscape (good orientation)
+	else {
+		// Resume the game and remove the text
+		game.paused = false;
+		this.rotateLabel.text = '';
+	}
+	},
 	addMobileInputs: function() {
 		// Add the jump button
 		var jumpButton = game.add.sprite(350, 240, 'jumpButton');
