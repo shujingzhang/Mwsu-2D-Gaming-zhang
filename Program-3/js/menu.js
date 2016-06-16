@@ -33,7 +33,6 @@ var menuState = {
 }
 
         var upKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
-		else{
         upKey.onDown.add(this.start, this);}
 
         this.muteButton = game.add.button(20, 20, 'mute', this.toggleSound, this);
