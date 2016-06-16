@@ -103,18 +103,7 @@ var playState = {
 		rightButton.events.onInputDown.add(this.setRightTrue, this);
 		rightButton.events.onInputUp.add(this.setRightFalse, this);
 		
-		setLeftTrue: function() {
-			this.moveLeft = true;
-		},
-		setLeftFalse: function() {
-			this.moveLeft = false;
-		},
-		setRightTrue: function() {
-			this.moveRight = true;
-		},
-		setRightFalse: function() {
-			this.moveRight = false;
-		},
+
 		sprite.events.onInputOver.add(callback, this);
 
 		// Triggered when the pointer is moving away from the button
@@ -128,7 +117,18 @@ var playState = {
 		
 		jumpButton.events.onInputDown.add(this.jumpPlayer, this);
 	},
-	
+	setLeftTrue: function() {
+		this.moveLeft = true;
+	},
+	setLeftFalse: function() {
+		this.moveLeft = false;
+	},
+	setRightTrue: function() {
+		this.moveRight = true;
+		},
+		setRightFalse: function() {
+			this.moveRight = false;
+		},
 	jumpPlayer: function() {
     // If the player is touching the ground
     if (this.player.body.onFloor()) {
