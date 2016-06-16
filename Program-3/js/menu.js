@@ -34,9 +34,6 @@ var menuState = {
 
         var upKey = game.input.keyboard.addKey(Phaser.Keyboard.UP);
         upKey.onDown.add(this.start, this);}
-
-        this.muteButton = game.add.button(20, 20, 'mute', this.toggleSound, this);
-        this.muteButton.frame = game.sound.mute ? 1 : 0;
 		
 		if (!game.device.desktop && game.input.y < 50 && game.input.x < 60) {
 		// It means we want to mute the game, so we don't start the game
