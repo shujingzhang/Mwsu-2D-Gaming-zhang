@@ -146,8 +146,8 @@ var playState = {
             if (globals.playerList[id])  {
                 globals.playerList[id].state = player_state;
             }
-            globals.playerList[id].update();
-            //now how do we update everyone??
+            globals.playerList[id].sprite.x = globals.playerList[id].state.x;
+            globals.playerList[id].sprite.y = globals.playerList[id].state.y;
          }
          
         
