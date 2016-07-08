@@ -1,6 +1,21 @@
 var play2State = {
 
+
+
     create: function() { 
+	
+		if (!game.device.dekstop) {
+		// Call 'orientationChange' when the device is rotated
+		game.scale.onOrientationChange.add(this.orientationChange, this);
+
+		// Create an empty label to write the error message if needed
+		this.rotateLabel = game.add.text(game.width/2, game.height/2, '',
+		{ font: '30px Arial', fill: '#fff', backgroundColor: '#000' });
+		this.rotateLabel.anchor.setTo(0.5, 0.5);
+
+		// Call the function at least once
+		this.orientationChange();
+	}
         this.cursor = game.input.keyboard.createCursorKeys();
         game.input.keyboard.addKeyCapture([Phaser.Keyboard.UP, Phaser.Keyboard.DOWN, Phaser.Keyboard.LEFT, Phaser.Keyboard.RIGHT]);
         this.wasd = {
@@ -8,24 +23,7 @@ var play2State = {
             left: game.input.keyboard.addKey(Phaser.Keyboard.A),
             right: game.input.keyboard.addKey(Phaser.Keyboard.D)
         };
-		
-		if (!game.device.desktop) {
-			this.addMobileInputs();
-		}
-		
-		if (!game.device.dekstop) {
-			// Call 'orientationChange' when the device is rotated
-			game.scale.onOrientationChange.add(this.orientationChange, this);
 
-			// Create an empty label to write the error message if needed
-			this.rotateLabel = game.add.text(game.width/2, game.height/2, '',
-			{ font: '30px Arial', fill: '#fff', backgroundColor: '#000' });
-			this.rotateLabel.anchor.setTo(0.5, 0.5);
-
-			// Call the function at least once
-			this.orientationChange();
-		}
-		
         this.player = game.add.sprite(game.width/2, game.height/2, 'player');
         this.player.anchor.setTo(0.5, 0.5);
         game.physics.arcade.enable(this.player);
@@ -39,9 +37,9 @@ var play2State = {
         game.physics.arcade.enable(this.coin); 
         this.coin.anchor.setTo(0.5, 0.5);
 
-        this.scoreLabel = game.add.text(30, 30, 'score: ' + game.global.score, 
+        this.scoreLabel = game.add.text(30, 30, 'score: 0', 
             { font: '18px Arial', fill: '#ffffff' });
-        //game.global.score = 0; 
+        game.global.score = 100; 
 
         this.enemies = game.add.group();
         this.enemies.enableBody = true;
@@ -58,11 +56,91 @@ var play2State = {
         this.emitter.setXSpeed(-150, 150);
         this.emitter.setScale(2, 0, 2, 0, 800);
         this.emitter.gravity = 0;
+		
+		if (!game.device.desktop) {
+		this.addMobileInputs();
+	}
     },
+	orientationChange: function() {
+	// If the game is in portrait (wrong orientation)
+	if (game.scale.isPortrait) {
+		// Pause the game and add a text explanation
+		game.paused = true;
+		this.rotateLabel.text = 'rotate your device in landscape';
+	}
+	// If the game is in landscape (good orientation)
+	else {
+		// Resume the game and remove the text
+		game.paused = false;
+		this.rotateLabel.text = '';
+	}
+	},
+	addMobileInputs: function() {
+		// Add the jump button
+		var jumpButton = game.add.sprite(350, 240, 'jumpButton');
+		jumpButton.inputEnabled = true;
+		jumpButton.alpha = 0.5;
+		
+		this.moveLeft = false;
+		this.moveRight = false;
+
+
+		// Add the move left button
+		var leftButton = game.add.sprite(50, 240, 'leftButton');
+		leftButton.inputEnabled = true;
+		leftButton.alpha = 0.5;
+		leftButton.events.onInputOver.add(this.setLeftTrue, this);
+		leftButton.events.onInputOut.add(this.setLeftFalse, this);
+		leftButton.events.onInputDown.add(this.setLeftTrue, this);
+		leftButton.events.onInputUp.add(this.setLeftFalse, this);
+
+		// Add the move right button
+		var rightButton = game.add.sprite(130, 240, 'rightButton');
+		rightButton.inputEnabled = true;
+		rightButton.alpha = 0.5;
+		rightButton.events.onInputOver.add(this.setRightTrue, this);
+		rightButton.events.onInputOut.add(this.setRightFalse, this);
+		rightButton.events.onInputDown.add(this.setRightTrue, this);
+		rightButton.events.onInputUp.add(this.setRightFalse, this);
+		
+
+		sprite.events.onInputOver.add(callback, this);
+
+		// Triggered when the pointer is moving away from the button
+		sprite.events.onInputOut.add(callback, this);
+
+		// Triggered when the pointer touches the button
+		sprite.events.onInputDown.add(callback, this);
+
+		// Triggered when the pointer goes up over the button
+		sprite.events.onInputUp.add(callback, this);
+		
+		jumpButton.events.onInputDown.add(this.jumpPlayer, this);
+	},
+	setLeftTrue: function() {
+		this.moveLeft = true;
+	},
+	setLeftFalse: function() {
+		this.moveLeft = false;
+	},
+	setRightTrue: function() {
+		this.moveRight = true;
+		},
+		setRightFalse: function() {
+			this.moveRight = false;
+		},
+	jumpPlayer: function() {
+    // If the player is touching the ground
+    if (this.player.body.onFloor()) {
+        // Jump with sound
+        this.player.body.velocity.y = -320;
+        this.jumpSound.play();
+    }
+},
 
     update: function() {
         game.physics.arcade.collide(this.player, this.layer);
-		game.physics.arcade.collide(this.enemies, this.layer);
+        game.physics.arcade.collide(this.enemies, this.layer);
         game.physics.arcade.overlap(this.player, this.coin, this.takeCoin, null, this);
         game.physics.arcade.overlap(this.player, this.enemies, this.playerDie, null, this);
 
@@ -73,7 +151,7 @@ var play2State = {
         this.movePlayer(); 
 
         if (!this.player.inWorld) {
-            this.state.start('play');
+            this.playerDie();
         }
 
         if (this.nextEnemy < game.time.now) {
@@ -84,38 +162,22 @@ var play2State = {
             this.nextEnemy = game.time.now + delay;
         }
     },
-	orientationChange: function() {
-		// If the game is in portrait (wrong orientation)
-		if (game.scale.isPortrait) {
-			// Pause the game and add a text explanation
-			game.paused = true;
-			this.rotateLabel.text = 'rotate your device in landscape';
-		}
-		// If the game is in landscape (good orientation)
-		else {
-			// Resume the game and remove the text
-			game.paused = false;
-			this.rotateLabel.text = '';
-		}
-	},
 
     movePlayer: function() {
-        // If 0 finger are touching the screen
+		
 		if (game.input.totalActivePointers == 0) {
 			// Make sure the player is not moving
 			this.moveLeft = false;
 			this.moveRight = false;
 		}
-
-		// Player moving left
 		if (this.cursor.left.isDown || this.wasd.left.isDown ||
-			this.moveLeft) { 
+			this.moveLeft) { // This is new
 			this.player.body.velocity.x = -200;
 			this.player.animations.play('left');
 		}
 		// Player moving right
 		else if (this.cursor.right.isDown || this.wasd.right.isDown ||
-			this.moveRight) { 
+			this.moveRight) { // This is new
 			this.player.body.velocity.x = 200;
 			this.player.animations.play('right');
 		}
@@ -126,9 +188,8 @@ var play2State = {
         }
         
         if ((this.cursor.up.isDown || this.wasd.up.isDown) && this.player.body.onFloor()) {
-			this.jumpSound.play();
-			this.jumpPlayer();
-		}
+        this.jumpPlayer();
+        }
     },
 
     takeCoin: function(player, coin) {
@@ -176,22 +237,22 @@ var play2State = {
         enemy.outOfBoundsKill = true;
     },
 
-    createWorld: function() {
-		// Create the tilemap
-		this.map = game.add.tilemap('map2');
+    createWorld: function() {ore
+    // Create the tilemap
+    this.map = game.add.tilemap('map2');
 
-		// Add the tileset to the map
-		this.map.addTilesetImage('tileset');
+    // Add the tileset to the map
+    this.map.addTilesetImage('tileset');
 
-		// Create the layer by specifying the name of the Tiled layer
-		this.layer = this.map.createLayer('Tile Layer 2');
+    // Create the layer by specifying the name of the Tiled layer
+    this.layer = this.map.createLayer('Tile Layer 1');
 
-		// Set the world size to match the size of the layer
-		//this.layer.resizeWorld();
+    // Set the world size to match the size of the layer
+    this.layer.resizeWorld();
 
-		// Enable collisions for the first tilset element (the blue wall)
-		this.map.setCollision(1);
-	},
+    // Enable collisions for the first tilset element (the blue wall)
+    this.map.setCollision(1);
+    },
 
     playerDie: function() {
         this.player.kill();
@@ -203,63 +264,6 @@ var play2State = {
         game.time.events.add(1000, this.startMenu, this);
         game.camera.shake(0.02, 300);
     },
-	
-	addMobileInputs: function() {
-		// Add the jump button 
-		var jumpButton = game.add.sprite(440, 280, 'jumpButton');
-		jumpButton.inputEnabled = true;
-		jumpButton.alpha = 0.5;
-		jumpButton.events.onInputDown.add(this.jumpPlayer, this);
-
-		// Movement variables
-		this.moveLeft = false;
-		this.moveRight = false;
-
-		// Add the move left button
-		var leftButton = game.add.sprite(50, 280, 'leftButton');
-		leftButton.inputEnabled = true;
-		leftButton.alpha = 0.5;
-		leftButton.events.onInputOver.add(this.setLeftTrue, this);
-		leftButton.events.onInputOut.add(this.setLeftFalse, this);
-		leftButton.events.onInputDown.add(this.setLeftTrue, this);
-		leftButton.events.onInputUp.add(this.setLeftFalse, this);
-
-		// Add the move right button
-		var rightButton = game.add.sprite(130, 280, 'rightButton');
-		rightButton.inputEnabled = true;
-		rightButton.alpha = 0.6;
-		rightButton.events.onInputOver.add(this.setRightTrue, this);
-		rightButton.events.onInputOut.add(this.setRightFalse, this);
-		rightButton.events.onInputDown.add(this.setRightTrue, this);
-		rightButton.events.onInputUp.add(this.setRightFalse, this);
-	},
-
-	// Basic functions that are used in our callbacks
-
-	setLeftTrue: function() {
-		this.moveLeft = true;
-	},
-	setLeftFalse: function() {
-		this.moveLeft = false;
-	},
-	setRightTrue: function() {
-		this.moveRight = true;
-	},
-	setRightFalse: function() {
-		this.moveRight = false;
-	},
-	
-	jumpPlayer: function() {
-		// If the player is touching the ground
-		if (this.player.body.onFloor()) {
-			// Jump with sound
-			this.player.body.velocity.y = -320;
-			this.jumpSound.play();
-		}
-	},
-	
-	
-
 
     startMenu: function() {
         game.state.start('menu');
